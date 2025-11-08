@@ -59,7 +59,7 @@ jobs:
         path: app.zip
     
     # Deploy steps to azure
-    deploy:
+  deploy:
     needs: build   # build when dependencies jobs (build) are completed successful
     runs-on: ubuntu-latest
     
