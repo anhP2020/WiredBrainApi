@@ -19,11 +19,13 @@ jobs:
     
     - name: Restore Dependencies
       run: dotnet restore
-
+    
+    # Build 
     - id: build
       name: Build      
       run: dotnet build --no-restore
 
+    # Run Tests
     - id: test
       if: steps.build.outcome == 'success'
       name: Test
@@ -41,5 +43,18 @@ jobs:
         indicators: true
         output: console
     
-  
+    # dotnet specific to run dotnetv publish command which bundle the compile application with its dependencies and output to its directory, ready to be deploy
+    - id: publish
+      name: Publish
+      run: dotnet publish "WiredBrainApi.Web/WiredBrainApi.Web.csproj" -c Release -o ./publish --self-contained -r linux-x64 /p:UseAppHost=true
+    # create zip archive of publish directory
+    - name: Zip Artifact
+      run: zip app.zip ./publish
+    # retain zip file as build artifact
+    - id: upload
+      name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dotnet-webapp
+        path: app.zip
       
